@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>lunbotu</title>
+        <style>
+            .containner {
+                position: absolute;
+                top: 150px;
+                left: 200px;
+                transform: translate(-50px, -50px);
+                height: 500px;
+                width: 800px;
+                background-color: lightblue;
+            }
+            .images {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                height: 100%;
+                width: 100%;
+                background-color: pink;
+            }
+            .image-img {
+                position: absolute;
+                display: none;
+                top: 0px;
+                left: 0px;
+                height: 100%;
+                width: 100%;
+            }
+            .image-active {
+                display: block !important;
+            }
+            .button-next {
+                position: absolute;
+                height: 60px;
+                width: 60px;
+                top: 50%;
+                right: 0%;
+                transform: translateY(-50%);
+                opacity: 0.5;
+            }
+            .button-last {
+                position: absolute;
+                height: 60px;
+                width: 60px;
+                top: 50%;
+                left: 0%;
+                transform: translateY(-50%);
+                opacity: 0.5;
+            }
+            .hide {
+                visibility: hidden;
+            }
+            .indicators {
+                position: absolute;
+                display: flex;
+                /*水平方向*/
+                align-items: center;
+                /*垂直方向*/
+                justify-content: space-around;
+                text-align: center;
+                width: 50%;
+                height: 20px;
+                bottom: 0px;
+                left:50%;
+                transform: translateX(-50%);
+                border-radius: 4px;
+                background: rgba(128, 128, 128, 0.32);
+            }
+            .indicator {
+                display: inline-block;
+                height: 20px;
+                width: 20px;
+                line-height: 20px;
+                text-align: center;
+                background-color: white;
+                border-width: 1px;
+                border-color: blue;
+                border-radius: 15px;
+                font-size: 10px;
+                /*top: 50%;*/
+                /*transform: translateY(-50%);*/
+            }
+            .indicator-active {
+                background-color:deeppink;
+            }
+        </style>
+        <script src='jquery.min.js'>
+        </script>
+    </head>
+    <body>
+        <div class="containner">
+            <div class="images" data-index='0'>
+                <img class="image-img image-active" src="image/1.jpg"/>
+                <img class="image-img"  src="image/2.jpg"/>
+                <img class="image-img"  src="image/3.jpg"/>
+                <img class="image-img"  src="image/4.jpg"/>
+                <img class="image-img"  src="image/5.jpg"/>
+            </div>
+            <button class="button-control button-next hide" type="button">&gt;</button>
+            <button class="button-control button-last hide" type="button">&lt;</button>
+            <div class="indicators">
+               <div class="indicator indicator-active" data-index="0">1</div>
+               <div class="indicator" data-index="1">2</div>
+               <div class="indicator" data-index="2">3</div>
+               <div class="indicator" data-index="3">4</div>
+               <div class="indicator" data-index="4">5</div>
+            </div>
+        </div>
+        <script>
+            //点击button时，发生的函数
+            var play = function(offset) {
+                var index = $('.images').data('index')
+                var numberOfImages = $('.image-img').length
+                var i = (index + numberOfImages + offset) % numberOfImages
+                // 将 data-index值设置为i,
+                $('.images').data('index', i)
+                $('.image-active').fadeOut(200, function(){
+                    //点击next按钮后，将图片的active去掉
+                    $('.image-active').removeClass('image-active')
+                    var currentIndeximg = $($('.image-img')[i])
+                    // 把active添加到当前所点击图片中
+                    currentIndeximg.addClass('image-active')
+                    currentIndeximg.fadeIn()
+                    $('.indicator-active').removeClass('indicator-active')
+                    $($('.indicator')[i]).addClass('indicator-active')
+                })
+            }
+            // 点击next键时
+            var playnext = function() {
+                play(1)
+            }
+            // 点击last键时
+            var playlast = function() {
+                play(-1)
+            }
+            // 给button添加click事件
+            var bindEventButtonClick = function() {
+                $('.button-control').on('click', function(event) {
+                    var target = $(event.target)
+                    // 当点击next时
+                    if (target.hasClass('button-next')) {
+                        playnext()
+                        // 当点击last时
+                    } else {
+                        playlast()
+                    }
+                })
+            }
+            // 给containner绑定mouseover、mouseout事件
+            var bindEventContainner = function() {
+                $('.containner').on('mouseover', function() {
+                    $('.button-control').removeClass('hide')
+                })
+                $('.containner').on('mouseout', function() {
+                    $('.button-control').addClass('hide')
+                })
+            }
+            // 给indicator添加click事件,当点击indicator则显示相应的图片
+             var bindEventIndicatorClick = function() {
+                 $('.indicator').on('click', function(event) {
+                     var target = $(event.target)
+                     // console.log('target', typeof target, target)
+                     $('.indicator-active').removeClass('indicator-active')
+                     target.addClass('indicator-active')
+                     var index = target.data('index')
+                     // console.log('index', index)
+                     $('.image-active').removeClass('image-active')
+                     $($('.image-img')[index]).addClass('image-active')
+                 })
+             }
+
+             var bindEvents = function() {
+                // 给button(next 、last)添加click事件
+                 bindEventButtonClick()
+                // 给containner绑定mouseover、mouseout事件
+                 bindEventContainner()
+                // 给indicator添加click事件,当点击indicator则显示相应的图片
+                 bindEventIndicatorClick()
+             }
+
+            var __main = function() {
+                bindEvents()
+            }
+            __main()
+        </script>
+    </body>
+</html>
