@@ -166,9 +166,11 @@
                      $('.indicator-active').removeClass('indicator-active')
                      target.addClass('indicator-active')
                      var index = target.data('index')
-                     // console.log('index', index)
+                     console.log('index', index)
                      $('.image-active').removeClass('image-active')
                      $($('.image-img')[index]).addClass('image-active')
+                     // 将 图片组data-index值设置为i,点击下一张按钮时，会从当前图片开始切换
+                     $('.images').data('index', index)
                  })
              }
 
